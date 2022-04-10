@@ -1,20 +1,30 @@
-// import 'package:auto_cv_builder/helperclasses/Firestoredb.dart';
 import 'package:auto_cv_builder/models/personalinfo.dart';
 import 'package:auto_cv_builder/models/qualification.dart';
-// import 'package:auto_cv_builder/publicfile/publicvars.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:get/get.dart';
 
 String pPersonalInfo = 'personalInfo', pObjectives = 'objectives';
+String pExperience = 'experience', plangs = 'langs';
+
+String pReference = 'reference', pSkills = 'skills';
+String pProjects = 'projects';
 
 class TotalDetails {
   TotalDetails({
+    required this.experience,
+    required this.langs,
+    required this.projects,
+    required this.skills,
+    required this.references,
     required this.personalInfo,
     required this.obejctives,
     required this.acheivements,
     required this.qualifications,
   });
-
+  List<String?> skills;
+  List<String?> langs;
+  String? experience;
+  List<String?> projects;
+  List<String?> references;
   PersonalInfo? personalInfo;
   String? obejctives;
   List<String?> acheivements;
@@ -26,32 +36,30 @@ class TotalDetails {
       pObjectives: obejctives,
       pQuals: qualifications.map((i) => i!.toMap()).toList(),
       pAcheivements: acheivements,
+      pExperience: experience,
+      pReference: references,
+      plangs: langs,
+      pSkills: skills,
+      pProjects: projects,
     };
   }
 
   // the below methods are for fetchingg the data from firestore documents
   static totalDetailsfromDocSnap(DocumentSnapshot snap) {
     return TotalDetails(
+        skills: _fetchString(snap, pSkills),
+        experience: snap[pExperience],
+        langs: _fetchString(snap, plangs),
+        projects: _fetchString(snap, pProjects),
+        references: _fetchString(snap, pReference),
         personalInfo: PersonalInfo.getpersonalinfofromjson(snap[pPersonalInfo]),
         obejctives: snap[pObjectives],
         qualifications: _fetchQuals(snap),
         acheivements: _fetchString(snap, pAcheivements));
-
-    // }
-
-    // static List<String> getAcheivements(List<String> a) {
-    //   List<String> listofacheivements = [];
-    //   a.forEach((element) {
-    //     listofacheivements.add(element);
-    //   });
-    //   return listofacheivements;
-    // }
   }
 
   static List<String> _fetchString(DocumentSnapshot snap, String property) {
     final listOfStrings = <String>[];
-    // DocumentSnapshot snap =
-    //     await firestore.collection(totaldata).doc(auth.currentUser.uid).get();
     final qualtemp = snap[property];
     for (String string in qualtemp) {
       print("this is from acheivements" + string);

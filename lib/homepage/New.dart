@@ -3,7 +3,10 @@
 import 'package:auto_cv_builder/controllers/buildnewcvctrl.dart';
 import 'package:auto_cv_builder/helperclasses/firestoredb.dart';
 import 'package:auto_cv_builder/homepage/pages/Personal_Info.dart';
+import 'package:auto_cv_builder/homepage/pages/Project_page.dart';
 import 'package:auto_cv_builder/homepage/pages/Qualification_Page.dart';
+import 'package:auto_cv_builder/homepage/pages/Reference_Page.dart';
+import 'package:auto_cv_builder/homepage/pages/Skills_Page.dart';
 import 'package:auto_cv_builder/models/totaldetails.dart';
 import 'package:auto_cv_builder/publicvars/public.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -19,32 +22,9 @@ import 'pages/Objective_Page.dart';
 class NewCV extends StatelessWidget {
   NewCV({Key? key}) : super(key: key);
   BuildNewCvCtrl ctrl = Get.find<BuildNewCvCtrl>();
-  //
-  //
-  //  Get.put(BuildNewCvCtrl());
-  // StreamBuilder<QuerySnapshot>(
-//   stream: Firestore.instance.collection('books').snapshots(),
-//   builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-//     if (!snapshot.hasData) return new Text('Loading...');
-//     return new ListView(
-//       children: snapshot.data.documents.map((DocumentSnapshot document) {
-//         return new ListTile(
-//           title: new Text(document['title']),
-//           subtitle: new Text(document['author']),
-//         );
-//       }).toList(),
-//     );
-//   },
-// );
 
   @override
   Widget build(BuildContext context) {
-    // return GetX<BuildNewCvCtrl>(
-    //   init: ,
-    //   builder: (controller) {
-    // return DefaultTabController(
-    //   length: 9,
-    // child:
     return Scaffold(
       appBar: AppBar(
         title: const Text('Build New CV'),
@@ -87,22 +67,14 @@ class NewCV extends StatelessWidget {
           PersonalData(),
           MyObjective(),
           MyQualifications(),
-
-          // MySkills(),
-
-          // MyExperience(),
+          MySkills(),
+          MyExperience(),
           MyAchievements(),
-          // MyProjets(),
-          // MyLanguages(),
-          // MyReference(),
+          MyProjets(),
+          MyLanguages(),
+          MyReference(),
         ],
       ),
     );
-    // );
-    //   },
-    // );
   }
-  // List<Widgets> myTabs=[]
 }
-
-class DocumentSnapShot {}

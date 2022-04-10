@@ -1,3 +1,5 @@
+// ignore_for_file: file_names, must_be_immutable, sized_box_for_whitespace
+
 import 'package:auto_cv_builder/controllers/buildnewcvctrl.dart';
 // import 'package:auto_cv_builder/controllers/objectivecontroller/objectivesCtrl.dart';
 import 'package:auto_cv_builder/mywidgets/mybtn.dart';
@@ -13,9 +15,6 @@ class MyObjective extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // return GetX(
-    //     init: Get.find<ObjectivesController>(),
-    //     builder: (ObjectivesController ctrl) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Center(
@@ -32,28 +31,28 @@ class MyObjective extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 50),
-              Obx(() {
-                return AppTextField(
-                  controller: buildNewCvCtrl.objectiveC.value,
-                  text: 'Objective',
-                  keyboardtype: TextInputType.text,
-                  geticon: Icons.calendar_today,
-                  lines: 2,
-                );
-              }),
+              Obx(
+                () {
+                  return AppTextField(
+                    controller: buildNewCvCtrl.objectiveC.value,
+                    text: 'Objective',
+                    keyboardtype: TextInputType.text,
+                    geticon: Icons.calendar_today,
+                    lines: 2,
+                  );
+                },
+              ),
+              const SizedBox(height: 10),
               MyButton(
                 text: 'Next',
                 myFunc: () {
-                  // buildNewCvCtrl.totalDetails.value.obejctives =
-                  //     objectivesController.objectiveC.value.text;
-
                   buildNewCvCtrl
                       .updateObjectives(buildNewCvCtrl.objectiveC.value.text);
-                  // ctrl.tabController.index + 1;
                   buildNewCvCtrl.updateTabController();
+                  // ctrl.tabController.index + 1;
+                  // buildNewCvCtrl.updateTabController();
                 },
               ),
-              // obj(),
               const SizedBox(height: 20),
               text()
             ],
@@ -68,9 +67,6 @@ class MyObjective extends StatelessWidget {
 Widget text() {
   return Container(
     height: 350,
-    // margin: EdgeInsets.symmetric(
-    //   vertical: 8,
-    // ),
     child: Column(
       children: [
         Row(

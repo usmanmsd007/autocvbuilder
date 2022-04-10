@@ -16,34 +16,58 @@ import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pdf/widgets.dart' as p;
 import 'package:open_file/open_file.dart';
-// import 'package:path_provider/path_provider.dart';
 
 class BuildNewCvCtrl extends GetxController
     with GetSingleTickerProviderStateMixin {
   Rx<TextEditingController> objectiveC = TextEditingController(text: "").obs;
+  // new
+
+  // not new
   Rx<TextEditingController> namec = TextEditingController(text: "").obs;
   Rx<TextEditingController> fnamec = TextEditingController(text: "").obs;
   Rx<TextEditingController> contactc = TextEditingController(text: "").obs;
   Rx<TextEditingController> addressc = TextEditingController(text: "").obs;
   Rx<TextEditingController> emailc = TextEditingController(text: "").obs;
   RxString objectiveText = ''.obs;
+  // new
+  RxString projectText = ''.obs;
+  RxString experienceText = ''.obs;
+  RxString referenceText = ''.obs;
+
+// not new
   Rx<TextEditingController> degreeC = TextEditingController(text: "").obs;
   Rx<TextEditingController> instituteC = TextEditingController(text: "").obs;
   Rx<TextEditingController> marksC = TextEditingController(text: "").obs;
   Rx<TextEditingController> yearC = TextEditingController(text: "").obs;
 
   Rx<TextEditingController> acheivementsC = TextEditingController(text: "").obs;
+  // new
+  Rx<TextEditingController> languageC = TextEditingController(text: "").obs;
+  Rx<TextEditingController> referenceC = TextEditingController(text: "").obs;
+
+  Rx<TextEditingController> experienceC = TextEditingController(text: "").obs;
+  Rx<TextEditingController> projectsC = TextEditingController(text: "").obs;
+  Rx<TextEditingController> skillC = TextEditingController(text: "").obs;
+
 // this is a tab controler for the new cv
   TabController? tabController;
 // this is the path for the image that has been selected.
   RxString imageFilePath = ''.obs;
 
   // this is an observable list from firestore as stream.
-  Rxn<List<TotalDetails>> totalDL = Rxn<List<TotalDetails>>([]);
+  Rxn<List<TotalDetails>> totalDetailsList = Rxn<List<TotalDetails>>([]);
   // this is the list of qualifications. it will get update when it get data from stream.
-  Rx<List<Qualifications?>> qualifications = Rx<List<Qualifications>>([]);
-  Rx<List<String?>> acheivements = Rx<List<String>>([]);
-  Rx<PersonalInfo> personalInfo = Rx(PersonalInfo(
+  Rx<List<Qualifications?>> qualList = Rx<List<Qualifications>>([]);
+  Rx<List<String?>> acheivementsList = Rx<List<String>>([]);
+  // new
+  Rx<List<String?>> referenceList = Rx<List<String>>([]);
+
+  Rx<List<String?>> languageList = Rx<List<String>>([]);
+  Rx<List<String?>> projectList = Rx<List<String>>([]);
+  Rx<List<String?>> skillslist = Rx<List<String>>([]);
+
+// not new
+  Rx<PersonalInfo> personalInfoObj = Rx(PersonalInfo(
       address: "",
       name: "",
       dob: 'Date of Birth',
@@ -56,23 +80,23 @@ class BuildNewCvCtrl extends GetxController
   @override
   void onInit() async {
     tabController = TabController(length: tabs.length, vsync: this);
-    // totalDL.value?.add(await FireStoreDb.getTotalDetailsfromDocSnap());
-    totalDL.bindStream(getTotalDetails());
-    ever(totalDL, initializeControllers);
+    totalDetailsList.bindStream(getTotalDetails());
+    ever(totalDetailsList, initializeControllers);
     super.onInit();
   }
 
   initializeControllers(dynamic val) {
-    if (totalDL.value!.length > 0) {
-      namec.value.text = totalDL.value!.first.personalInfo!.name;
-      addressc.value.text = totalDL.value!.first.personalInfo!.address;
-      fnamec.value.text = totalDL.value!.first.personalInfo!.fatherName;
-      contactc.value.text = totalDL.value!.first.personalInfo!.contact;
-      emailc.value.text = totalDL.value!.first.personalInfo!.email;
-      objectiveC.value.text = totalDL.value!.first.obejctives!;
-      qualifications.value = totalDL.value!.first.qualifications;
-      acheivements.value = (totalDL.value!.first.acheivements);
-      selectedDate.value = totalDL.value!.first.personalInfo!.dob;
+    if (totalDetailsList.value!.length > 0) {
+      namec.value.text = totalDetailsList.value!.first.personalInfo!.name;
+      addressc.value.text = totalDetailsList.value!.first.personalInfo!.address;
+      fnamec.value.text =
+          totalDetailsList.value!.first.personalInfo!.fatherName;
+      contactc.value.text = totalDetailsList.value!.first.personalInfo!.contact;
+      emailc.value.text = totalDetailsList.value!.first.personalInfo!.email;
+      objectiveC.value.text = totalDetailsList.value!.first.obejctives!;
+      qualList.value = totalDetailsList.value!.first.qualifications;
+      acheivementsList.value = (totalDetailsList.value!.first.acheivements);
+      selectedDate.value = totalDetailsList.value!.first.personalInfo!.dob;
       // personalInfo.value = totalDL.value!.first.personalInfo!;
       update();
       refresh();
@@ -113,6 +137,20 @@ class BuildNewCvCtrl extends GetxController
     emailc.value.dispose();
     objectiveC.value.dispose();
 
+    degreeC.value.dispose();
+    instituteC.value.dispose();
+    marksC.value.dispose();
+    yearC.value.dispose();
+
+    acheivementsC.value.dispose();
+    // new
+    languageC.value.dispose();
+    referenceC.value.dispose();
+
+    experienceC.value.dispose();
+    projectsC.value.dispose();
+    skillC.value.dispose();
+
     super.onClose();
   }
 
@@ -130,40 +168,71 @@ class BuildNewCvCtrl extends GetxController
     // update();
   }
 
+  void updateExperience(String s) {
+    experienceText.value = s;
+    refresh();
+    // update();
+  }
+
   void updateTabController() {
     tabController!.animateTo(tabController!.index + 1);
     // tabController!.notifyListeners();
   }
 
   void setPersonalinfo(PersonalInfo info) {
-    personalInfo.value = info;
+    personalInfoObj.value = info;
   }
 
   void addQual() {
-    qualifications.value.add(Qualifications(
+    qualList.value.add(Qualifications(
         year: yearC.value.text,
         degree: degreeC.value.text,
         marks: marksC.value.text,
         board: instituteC.value.text));
-    qualifications.refresh();
+    qualList.refresh();
   }
 
   void deleteQual(int i) {
-    qualifications.value.removeAt(i);
-    qualifications.refresh();
+    qualList.value.removeAt(i);
+    qualList.refresh();
   }
 
   void updateAcheivements() {
-    acheivements.value.add(acheivementsC.value.text);
-    acheivements.refresh();
+    acheivementsList.value.add(acheivementsC.value.text);
+    acheivementsList.refresh();
+  }
+
+  void updateLanguages() {
+    languageList.value.add(languageC.value.text);
+    languageList.refresh();
+  }
+
+  void updateProjects() {
+    projectList.value.add(projectsC.value.text);
+    projectList.refresh();
+  }
+
+  void updateSkills() {
+    skillslist.value.add(skillC.value.text);
+    skillslist.refresh();
+  }
+
+  void updateReference() {
+    referenceList.value.add(referenceC.value.text);
+    referenceList.refresh();
   }
 
   void printAllData() {
     TotalDetails temp = TotalDetails(
-      acheivements: acheivements.value,
+      acheivements: acheivementsList.value,
       obejctives: objectiveText.value,
-      qualifications: qualifications.value,
-      personalInfo: personalInfo.value,
+      qualifications: qualList.value,
+      personalInfo: personalInfoObj.value,
+      skills: skillslist.value,
+      references: referenceList.value,
+      langs: languageList.value,
+      projects: projectList.value,
+      experience: experienceText.value,
     );
     firestore
         .collection(totaldata)
@@ -191,70 +260,53 @@ class BuildNewCvCtrl extends GetxController
       text: 'Qualification',
       height: 50,
     ),
-    // Tab(
-    //   iconMargin: EdgeInsets.all(3),
-    //   icon: Icon(Icons.computer),
-    //   text: 'Skills',
-    //   height: 50,
-    // ),
-    // Tab(
-    //   iconMargin: EdgeInsets.all(3),
-    //   icon: Icon(Icons.poll_outlined),
-    //   text: 'Experience',
-    //   height: 50,
-    // ),
+    Tab(
+      iconMargin: EdgeInsets.all(3),
+      icon: Icon(Icons.computer),
+      text: 'Skills',
+      height: 50,
+    ),
+    Tab(
+      iconMargin: EdgeInsets.all(3),
+      icon: Icon(Icons.poll_outlined),
+      text: 'Experience',
+      height: 50,
+    ),
     Tab(
       iconMargin: EdgeInsets.all(3),
       icon: Icon(Icons.task),
       text: 'Achievements',
       height: 50,
     ),
-    // Tab(
-    //   iconMargin: EdgeInsets.all(3),
-    //   icon: Icon(Icons.list_alt),
-    //   text: 'Project',
-    //   height: 50,
-    // ),
-    // Tab(
-    //   iconMargin: EdgeInsets.all(3),
-    //   icon: Icon(Icons.language),
-    //   text: 'Language',
-    //   height: 50,
-    // ),
-    // Tab(
-    //   iconMargin: EdgeInsets.all(3),
-    //   icon: Icon(Icons.family_restroom_sharp),
-    //   text: 'Reference',
-    //   height: 50,
-    // )
+    Tab(
+      iconMargin: EdgeInsets.all(3),
+      icon: Icon(Icons.list_alt),
+      text: 'Project',
+      height: 50,
+    ),
+    Tab(
+      iconMargin: EdgeInsets.all(3),
+      icon: Icon(Icons.language),
+      text: 'Language',
+      height: 50,
+    ),
+    Tab(
+      iconMargin: EdgeInsets.all(3),
+      icon: Icon(Icons.family_restroom_sharp),
+      text: 'Reference',
+      height: 50,
+    )
   ];
-
-  // RxString pdfPath = "".obs;
-  // Future<File> generateCV() async {
-  //   var pdfCv = p.Document();
-  //   pdfCv.addPage(p.Page(build: (p.Context context) {
-  //     return p.Center(
-  //         child: p.Container(child: p.Text('hello this is em usman mehsud')));
-  //   }));
-
-  //   final bytes = await pdfCv.save();
-  //   final dir = await getApplicationDocumentsDirectory();
-  //   final file = File('${dir.path}/pdffiiles/usman.pdf');
-  //   await file.writeAsBytes(bytes);
-  //   String s = file.path;
-  //   return file;
-  // }
-
-  Future<File> generateCenteredText(String text) async {
+  Future<File> generateCenteredText(String text, String filename) async {
     final pdf = p.Document();
 
     pdf.addPage(p.Page(
-      build: (p.Context context) => p.Center(
-        child: p.Text(text, style: const p.TextStyle(fontSize: 48)),
-      ),
+      build: (p.Context context) => p.Container(
+          child: p.Column(children: [
+        imageFilePath.value.isNotEmpty ? p.Center() : p.Container(),
+      ])),
     ));
-
-    return saveDocument(name: 'Name: ${namec.value.text}.pdf', pdf: pdf);
+    return saveDocument(name: '${filename}.pdf', pdf: pdf);
   }
 
   Future<File> saveDocument({
@@ -262,31 +314,25 @@ class BuildNewCvCtrl extends GetxController
     required p.Document pdf,
   }) async {
     final bytes = await pdf.save();
-
     final dir = await getExternalStorageDirectory();
     final file = File('${dir!.path}/$name');
-
     await file.writeAsBytes(bytes);
-
     return file;
   }
 
-  Future openFile(File file) async {
+  Future openFile(String n) async {
+    File file = await generateCenteredText('usman', n);
     final url = file.path;
 
     await OpenFile.open(url);
   }
 
   chooseDate() async {
-    // printInfo(info: 'thiss is the now date: ${selectedDate.toString()}');
     DateTime? pickedDate = await showDatePicker(
       context: Get.context!,
       initialDate: DateTime.now(),
-      // firstDate: DateTime(2000),
       firstDate: DateTime(1999),
       lastDate: DateTime(2024),
-      //initialEntryMode: DatePickerEntryMode.input,
-      // initialDatePickerMode: DatePickerMode.year,
       helpText: 'Select DOB',
       cancelText: 'Close',
       confirmText: 'Confirm',
@@ -294,11 +340,9 @@ class BuildNewCvCtrl extends GetxController
       errorInvalidText: 'Enter valid date range',
       fieldLabelText: 'DOB',
       fieldHintText: 'Month/Date/Year',
-      // selectableDayPredicate: disableDate
     );
     if (pickedDate != null && pickedDate != selectedDate.value) {
       selectedDate.value = DateFormat('dd/MM/yyyy').format(pickedDate);
-      // DateFormat('dd-MM-yyyy).format(pickedDate).toString();
     }
   }
 }

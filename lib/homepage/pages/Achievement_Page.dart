@@ -12,90 +12,100 @@ class MyAchievements extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: Get.width,
-      child: Stack(
-        children: [
-          Center(
-            child: SingleChildScrollView(
-              child: Column(
-                children: <Widget>[
-                  const Text(
-                    'Achievements',
-                    style: TextStyle(
-                      color: Color(0xfff7892b),
-                      fontSize: 30,
-                      fontWeight: FontWeight.w800,
-                      decoration: TextDecoration.underline,
-                    ),
-                  ),
-                  // const SizedBox(height: 50),
-                  SizedBox(
-                    height: 200,
-                    child: Obx(() {
-                      return ctrl.acheivements.value.length > 0
-                          ? CustomScrollView(
-                              slivers: [
-                                SliverGrid(
-                                  delegate: SliverChildBuilderDelegate((c, i) {
-                                    return Text(
-                                      ctrl.acheivements.value[i]!,
-                                    );
-                                  },
-                                      childCount:
-                                          ctrl.acheivements.value.length),
-                                  gridDelegate:
-                                      const SliverGridDelegateWithFixedCrossAxisCount(
-                                          childAspectRatio: 1,
-                                          crossAxisCount: 1,
-                                          crossAxisSpacing: 1,
-                                          mainAxisSpacing: 3,
-                                          mainAxisExtent: 40),
-                                ),
-                              ],
-                            )
-                          : const Text('No Acheivements Yet');
-                    }),
-                  ),
-
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: AppTextField(
-                          controller: ctrl.acheivementsC.value,
-                          text: 'Achievemsnts',
-                          keyboardtype: TextInputType.text,
-                          geticon: Icons.task,
-                        ),
-                      ),
-                    ],
-                  ),
-                  MyButton(
-                    text: 'Add',
-                    myFunc: () {
-                      ctrl.updateAcheivements();
-                    },
-                  )
-                  // const SizedBox(
-                  //   height: 10,
-                  // ),
-                ],
+      child: SingleChildScrollView(
+        child: Column(
+          children: <Widget>[
+            const Text(
+              'Achievements',
+              style: TextStyle(
+                color: Color(0xfff7892b),
+                fontSize: 30,
+                fontWeight: FontWeight.w800,
+                decoration: TextDecoration.underline,
               ),
             ),
-          ),
-          Positioned(
-            bottom: 5,
-            right: 2,
-            left: 2,
-            child: MyButton(
-              text: 'Next',
-              myFunc: () async {
-                ctrl.printAllData();
-                var file = await ctrl.generateCenteredText('Usman Mehsud');
-                ctrl.openFile(file);
-              },
+            // const SizedBox(height: 50),
+            SizedBox(
+              height: Get.height / 2,
+              child: Obx(() {
+                return ctrl.acheivementsList.value.length > 0
+                    ? Center(
+                        child: CustomScrollView(
+                          slivers: [
+                            SliverGrid(
+                              delegate: SliverChildBuilderDelegate((c, i) {
+                                return Center(
+                                  child: Text(
+                                    ctrl.acheivementsList.value[i]!,
+                                    style: TextStyle(
+                                      color: Colors.orange,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                );
+                              },
+                                  childCount:
+                                      ctrl.acheivementsList.value.length),
+                              gridDelegate:
+                                  const SliverGridDelegateWithFixedCrossAxisCount(
+                                      childAspectRatio: 1,
+                                      crossAxisCount: 1,
+                                      crossAxisSpacing: 1,
+                                      mainAxisSpacing: 3,
+                                      mainAxisExtent: 40),
+                            ),
+                          ],
+                        ),
+                      )
+                    : Center(
+                        child: const Text(
+                          'No Acheivements Yet',
+                          style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.orange),
+                        ),
+                      );
+              }),
             ),
-          ),
-        ],
+
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: AppTextField(
+                    controller: ctrl.acheivementsC.value,
+                    text: 'Achievemsnts',
+                    keyboardtype: TextInputType.text,
+                    geticon: Icons.task,
+                  ),
+                ),
+                FloatingActionButton(
+                  onPressed: () {
+                    ctrl.updateAcheivements();
+                    ctrl.acheivementsC.value.text = '';
+                  },
+                  child: Icon(
+                    Icons.add,
+                    color: Colors.white,
+                  ),
+                  focusColor: Colors.orange,
+                  backgroundColor: Colors.orange,
+                )
+              ],
+            ),
+            // MyButton(
+            //   text: 'Add',
+            //   myFunc: () {
+            //     ctrl.updateAcheivements();
+            //   },
+            // )
+            // const SizedBox(
+            //   height: 10,
+            // ),
+          ],
+        ),
       ),
     );
   }

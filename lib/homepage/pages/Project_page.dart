@@ -1,22 +1,19 @@
 import 'package:auto_cv_builder/mywidgets/mytxtfield.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
-class MyProjets extends StatefulWidget {
-  const MyProjets({Key? key}) : super(key: key);
+import '../../controllers/buildnewcvctrl.dart';
+import '../../mywidgets/mybtn.dart';
 
-  @override
-  _MyProjetsState createState() => _MyProjetsState();
-}
+class MyProjets extends StatelessWidget {
+  MyProjets({Key? key}) : super(key: key);
+  final BuildNewCvCtrl ctrl = Get.find<BuildNewCvCtrl>();
 
-class _MyProjetsState extends State<MyProjets> {
-  bool value = false;
   @override
   Widget build(BuildContext context) {
     return Container(
-      alignment: Alignment.topCenter,
-      margin: EdgeInsets.only(top: 20),
-      padding: EdgeInsets.symmetric(horizontal: 20),
-      child: Center(
+      width: Get.width,
+      child: SingleChildScrollView(
         child: Column(
           children: <Widget>[
             const Text(
@@ -28,41 +25,86 @@ class _MyProjetsState extends State<MyProjets> {
                 decoration: TextDecoration.underline,
               ),
             ),
-            SizedBox(height: 50),
-            check(),
-            project(),
-            // add(),
+            // const SizedBox(height: 50),
+            SizedBox(
+              height: Get.height / 2,
+              child: Obx(() {
+                return ctrl.projectList.value.length > 0
+                    ? CustomScrollView(
+                        slivers: [
+                          SliverGrid(
+                            delegate: SliverChildBuilderDelegate((c, i) {
+                              return Center(
+                                child: Text(
+                                  ctrl.projectList.value[i]!,
+                                  style: TextStyle(
+                                    color: Colors.orange,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              );
+                            }, childCount: ctrl.projectList.value.length),
+                            gridDelegate:
+                                const SliverGridDelegateWithFixedCrossAxisCount(
+                                    childAspectRatio: 1,
+                                    crossAxisCount: 1,
+                                    crossAxisSpacing: 1,
+                                    mainAxisSpacing: 3,
+                                    mainAxisExtent: 40),
+                          ),
+                        ],
+                      )
+                    : Center(
+                        child: const Text(
+                          'No Project Yet',
+                          style: TextStyle(
+                            color: Colors.orange,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      );
+              }),
+            ),
+
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: AppTextField(
+                    controller: ctrl.projectsC.value,
+                    text: 'Projects',
+                    keyboardtype: TextInputType.text,
+                    geticon: Icons.task,
+                  ),
+                ),
+                FloatingActionButton(
+                  onPressed: () {
+                    ctrl.updateProjects();
+                    ctrl.projectsC.value.text = '';
+                  },
+                  child: Icon(
+                    Icons.add,
+                    color: Colors.white,
+                  ),
+                  focusColor: Colors.orange,
+                  backgroundColor: Colors.orange,
+                )
+              ],
+            ),
+            // MyButton(
+            //   text: 'Add',
+            //   myFunc: () {
+            //     ctrl.updateLanguages();
+            //   },
+            // )
+            // const SizedBox(
+            //   height: 10,
+            // ),
           ],
         ),
       ),
     );
   }
-
-  Widget check() {
-    return Container(
-      alignment: Alignment.topRight,
-      child: Checkbox(
-        activeColor: Color(0xfff7892b),
-        side: BorderSide(color: Color(0xfff7892b)),
-        value: this.value,
-        onChanged: (bool? value) {
-          setState(
-            () {
-              this.value = value!;
-            },
-          );
-        },
-      ),
-    );
-  }
-}
-
-Widget project() {
-  var controller;
-  return AppTextField(
-    controller: controller,
-    text: 'Language',
-    keyboardtype: TextInputType.text,
-    geticon: Icons.list_alt,
-  );
 }

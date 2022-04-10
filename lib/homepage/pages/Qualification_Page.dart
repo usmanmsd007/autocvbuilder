@@ -1,6 +1,4 @@
 import 'package:auto_cv_builder/controllers/buildnewcvctrl.dart';
-import 'package:auto_cv_builder/models/qualification.dart';
-// import 'package:auto_cv_builder/models/qualification.dart';
 import 'package:auto_cv_builder/mywidgets/qualbtmsht.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -15,6 +13,8 @@ class MyQualifications extends StatelessWidget {
         Center(
           child: SingleChildScrollView(
             child: Column(
+              // mainAxisAlignment: MainAxisAlignment.start,
+              // crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 const Text(
                   'Qualifications',
@@ -29,7 +29,8 @@ class MyQualifications extends StatelessWidget {
                 // add(),
                 // qualification()
                 Container(
-                  height: 380,
+                  height: Get.height / 1.6,
+                  width: Get.width / 1.1,
                   // margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 5),
                   decoration: const BoxDecoration(
                     borderRadius: BorderRadius.only(
@@ -41,29 +42,26 @@ class MyQualifications extends StatelessWidget {
                       colors: [Color(0xfffbb448), Color(0xfff7892b)],
                     ),
                   ),
-                  child: Obx(
-                      // init: Get.find<BuildNewCvCtrl>(),
-                      () {
-                    // buildNewCvCtrl.totalDetails!.value!.qualifications;
-                    return buildNewCvCtrl.qualifications.value.isNotEmpty
+                  child: Obx(() {
+                    return buildNewCvCtrl.qualList.value.isNotEmpty
                         ? CustomScrollView(
                             slivers: [
                               SliverToBoxAdapter(
                                 child: Center(
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Container(
-                                      // width: 300,
-                                      // height: 200,
-                                      color: Colors.red,
+                                  child: Container(
+                                    width: Get.width / 1.1,
+                                    color: Colors.red,
+                                    child: Padding(
+                                      padding:
+                                          const EdgeInsets.fromLTRB(8, 4, 8, 4),
                                       child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        children: const [
+                                        // mainAxisAlignment:
+                                        //     MainAxisAlignment.spaceBetween,
+                                        // crossAxisAlignment:
+                                        //     CrossAxisAlignment.center,
+                                        children: [
                                           SizedBox(
-                                            width: 70,
+                                            width: Get.width / 5,
                                             child: Text(
                                               'Degree/Certeficate',
                                               style: TextStyle(
@@ -74,7 +72,7 @@ class MyQualifications extends StatelessWidget {
                                             ),
                                           ),
                                           SizedBox(
-                                            width: 120,
+                                            width: Get.width / 5,
                                             child: Text(
                                               'Institute',
                                               style: TextStyle(
@@ -85,7 +83,7 @@ class MyQualifications extends StatelessWidget {
                                             ),
                                           ),
                                           SizedBox(
-                                            width: 50,
+                                            width: Get.width / 6,
                                             child: Text(
                                               'Marks/GPA',
                                               style: TextStyle(
@@ -96,7 +94,7 @@ class MyQualifications extends StatelessWidget {
                                             ),
                                           ),
                                           SizedBox(
-                                            width: 50,
+                                            width: Get.width / 6,
                                             child: Text(
                                               'Year',
                                               overflow: TextOverflow.ellipsis,
@@ -112,27 +110,33 @@ class MyQualifications extends StatelessWidget {
                                   ),
                                 ),
                               ),
+                              // SizedBox(
+                              //   height: 4,
+                              // ),
+                              SliverToBoxAdapter(
+                                child: SizedBox(height: 5),
+                              ),
                               SliverGrid(
                                 delegate: SliverChildBuilderDelegate(
                                   (c, i) {
                                     return Center(
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Container(
-                                          // width: 300,
-                                          height: 120,
-                                          color: Colors.red,
+                                      child: Container(
+                                        width: Get.width / 1.1,
+                                        height: 120,
+                                        color: Colors.red,
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(8.0),
                                           child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
+                                            // mainAxisAlignment:
+                                            //     MainAxisAlignment.center,
+                                            // crossAxisAlignment:
+                                            //     CrossAxisAlignment.stretch,
                                             mainAxisSize: MainAxisSize.max,
                                             children: [
                                               SizedBox(
-                                                width: 70,
+                                                width: Get.width / 5,
                                                 child: Text(
-                                                  buildNewCvCtrl.qualifications
+                                                  buildNewCvCtrl.qualList
                                                       .value[i]!.degree,
                                                   style: const TextStyle(
                                                     fontSize: 10,
@@ -142,10 +146,13 @@ class MyQualifications extends StatelessWidget {
                                                 ),
                                               ),
                                               SizedBox(
-                                                width: 120,
+                                                width: 2,
+                                              ),
+                                              SizedBox(
+                                                width: Get.width / 5,
                                                 child: Text(
-                                                  buildNewCvCtrl.qualifications
-                                                      .value[i]!.board,
+                                                  buildNewCvCtrl
+                                                      .qualList.value[i]!.board,
                                                   style: const TextStyle(
                                                     fontSize: 10,
                                                     color: Colors.white,
@@ -154,10 +161,13 @@ class MyQualifications extends StatelessWidget {
                                                 ),
                                               ),
                                               SizedBox(
-                                                width: 50,
+                                                width: 2,
+                                              ),
+                                              SizedBox(
+                                                width: Get.width / 6,
                                                 child: Text(
-                                                  buildNewCvCtrl.qualifications
-                                                      .value[i]!.marks,
+                                                  buildNewCvCtrl
+                                                      .qualList.value[i]!.marks,
                                                   style: const TextStyle(
                                                     fontSize: 10,
                                                     color: Colors.white,
@@ -166,10 +176,13 @@ class MyQualifications extends StatelessWidget {
                                                 ),
                                               ),
                                               SizedBox(
-                                                width: 50,
+                                                width: 2,
+                                              ),
+                                              SizedBox(
+                                                width: Get.width / 6,
                                                 child: Text(
-                                                  buildNewCvCtrl.qualifications
-                                                      .value[i]!.year,
+                                                  buildNewCvCtrl
+                                                      .qualList.value[i]!.year,
                                                   overflow:
                                                       TextOverflow.ellipsis,
                                                   style: const TextStyle(
@@ -193,9 +206,8 @@ class MyQualifications extends StatelessWidget {
                                       ),
                                     );
                                   },
-                                  childCount: buildNewCvCtrl
-                                      .qualifications.value.length,
-                                  // ctrl.totalDetails.value.qualifications.length,
+                                  childCount:
+                                      buildNewCvCtrl.qualList.value.length,
                                 ),
                                 gridDelegate:
                                     const SliverGridDelegateWithFixedCrossAxisCount(
@@ -208,24 +220,35 @@ class MyQualifications extends StatelessWidget {
                               ),
                             ],
                           )
-                        : Text('Plese add Some of your Qualifications');
+                        : Center(
+                            child: Text(
+                              'Plese add Some of your Qualifications',
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.white,
+                              ),
+                            ),
+                          );
                   }),
                 )
               ],
             ),
           ),
         ),
-        Positioned(
-          child: InkWell(
-              onTap: () {
-                Get.bottomSheet(QualBottomSheet());
-              },
-              child: const CircleAvatar(child: Icon(Icons.add))),
-          left: 2,
-          right: 2,
+        Positioned.fill(
+          child: Align(
+            alignment: Alignment.bottomCenter,
+            child: InkWell(
+                onTap: () {
+                  Get.bottomSheet(QualBottomSheet());
+                },
+                child: const CircleAvatar(
+                  child: Icon(Icons.add),
+                  backgroundColor: Colors.white,
+                )),
+          ),
           bottom: 30,
         ),
-        // )
       ],
     );
   }

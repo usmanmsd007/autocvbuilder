@@ -6,129 +6,124 @@ import 'package:auto_cv_builder/mywidgets/mytxtfield.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-List<Widget> references = [ReferenceTab()];
-
 class MyReference extends StatelessWidget {
   MyReference({Key? key}) : super(key: key);
 
   BuildNewCvCtrl ctrl = Get.find<BuildNewCvCtrl>();
-  bool value = false;
-
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: Stack(children: [
-        Column(
+      width: Get.width,
+      child: SingleChildScrollView(
+        child: Column(
           children: <Widget>[
-            Container(
-              child: Text(
-                'Reference',
-                style: TextStyle(
-                  color: Color(0xfff7892b),
-                  fontSize: 30,
-                  fontWeight: FontWeight.w800,
-                  decoration: TextDecoration.underline,
-                ),
+            const Text(
+              'References',
+              style: TextStyle(
+                color: Color(0xfff7892b),
+                fontSize: 30,
+                fontWeight: FontWeight.w800,
+                decoration: TextDecoration.underline,
               ),
             ),
-            SizedBox(height: 50),
-            check(),
-            Container(
-              height: 300,
-              child: ListView.builder(
-                  itemCount: references.length,
-                  itemBuilder: (context, index) {
-                    return references[index];
-                  }),
+            // const SizedBox(height: 50),
+            SizedBox(
+              height: Get.height / 2,
+              child: Obx(() {
+                return ctrl.referenceList.value.length > 0
+                    ? CustomScrollView(
+                        slivers: [
+                          SliverGrid(
+                            delegate: SliverChildBuilderDelegate((c, i) {
+                              return Center(
+                                child: Text(
+                                  ctrl.referenceList.value[i]!,
+                                  style: TextStyle(
+                                    color: Colors.orange,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              );
+                            }, childCount: ctrl.referenceList.value.length),
+                            gridDelegate:
+                                const SliverGridDelegateWithFixedCrossAxisCount(
+                                    childAspectRatio: 1,
+                                    crossAxisCount: 1,
+                                    crossAxisSpacing: 1,
+                                    mainAxisSpacing: 3,
+                                    mainAxisExtent: 40),
+                          ),
+                        ],
+                      )
+                    : Center(
+                        child: const Text(
+                          'No Reference Yet',
+                          style: TextStyle(
+                            color: Colors.orange,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      );
+              }),
             ),
-            Add(),
-            Positioned(
-                child: MyButton(
-              text: "Add Reference",
-              myFunc: () {
-                ctrl.updateAcheivements();
-              },
-            )),
+
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: AppTextField(
+                    controller: ctrl.referenceC.value,
+                    text: 'Reference',
+                    keyboardtype: TextInputType.text,
+                    geticon: Icons.task,
+                  ),
+                ),
+                FloatingActionButton(
+                  onPressed: () {
+                    ctrl.updateReference();
+                    ctrl.referenceC.value.text = '';
+                  },
+                  child: Icon(
+                    Icons.add,
+                    color: Colors.white,
+                  ),
+                  focusColor: Colors.orange,
+                  backgroundColor: Colors.orange,
+                )
+              ],
+            ),
+            // MyButton(
+            //   text: 'Add',
+            //   myFunc: () {
+            //     ctrl.updateLanguages();
+            //   },
+            // )
+            // const SizedBox(
+            //   height: 10,
+            // )
+            // ,
+            SizedBox(
+              height: 10,
+            ),
+            ElevatedButton(
+                style: ElevatedButton.styleFrom(primary: Colors.orange),
+                onPressed: () {
+                  ctrl.printAllData();
+                  ctrl.openFile();
+                  // ctrl.generateCenteredText('hello how are you?');
+                },
+                child: Text(
+                  'CREATE CV',
+                  style: TextStyle(
+                      fontSize: 19,
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold),
+                ))
           ],
         ),
-      ]),
-    );
-  }
-
-  Widget check() {
-    return Container(
-      alignment: Alignment.topRight,
-      child: Checkbox(
-        activeColor: Color(0xfff7892b),
-        side: BorderSide(color: Color(0xfff7892b)),
-        value: this.value,
-        onChanged: (bool? value) {},
       ),
     );
   }
-}
-
-// Widget reference() {
-//   var controller;
-//   return AppTextField(
-//     controller: controller,
-//     text: 'Reference',
-//     keyboardtype: TextInputType.text,
-//     geticon: Icons.family_restroom_sharp,
-//   );
-// }
-
-class ReferenceTab extends StatelessWidget {
-  const ReferenceTab({Key? key}) : super(key: key);
-  @override
-  Widget build(BuildContext context) {
-    var controller;
-    // TextEditingController c = TextEditingController();
-    return AppTextField(
-      controller: controller,
-      text: 'Reference',
-      keyboardtype: TextInputType.text,
-      geticon: Icons.family_restroom_sharp,
-    );
-  }
-}
-
-class Add extends StatefulWidget {
-  const Add({Key? key}) : super(key: key);
-
-  @override
-  _AddState createState() => _AddState();
-}
-
-class _AddState extends State<Add> {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      alignment: Alignment.topRight,
-      child: IconButton(
-        onPressed: () {
-          setState(() {
-            references.add(ReferenceTab());
-          });
-        },
-        icon: const Icon(
-          Icons.add,
-          color: Color(0xfff7892b),
-        ),
-      ),
-    );
-  }
-}
-
-Widget add() {
-  return Container(
-    alignment: Alignment.topRight,
-    child: IconButton(
-      onPressed: () => references.add(ReferenceTab()),
-      icon: const Icon(
-        Icons.add,
-        color: Color(0xfff7892b),
-      ),
-    ),
-  );
 }

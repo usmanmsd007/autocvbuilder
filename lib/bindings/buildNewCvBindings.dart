@@ -4,6 +4,8 @@ import 'package:get/get.dart';
 class BuildNewCvBindings implements Bindings {
   @override
   void dependencies() {
-    Get.lazyPut(() => BuildNewCvCtrl(), fenix: true);
+    Get.lazyPut(
+      () => BuildNewCvCtrl(),
+    );
   }
 }

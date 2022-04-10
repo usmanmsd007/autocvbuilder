@@ -1,69 +1,57 @@
-import 'package:auto_cv_builder/mywidgets/mytxtfield.dart';
-
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
-class MyExperience extends StatefulWidget {
-  const MyExperience({Key? key}) : super(key: key);
+import '../../controllers/buildnewcvctrl.dart';
+import '../../mywidgets/mybtn.dart';
+import '../../mywidgets/mytxtfield.dart';
 
-  @override
-  _MyExperienceState createState() => _MyExperienceState();
-}
+class MyExperience extends StatelessWidget {
+  MyExperience({Key? key}) : super(key: key);
 
-class _MyExperienceState extends State<MyExperience> {
-  bool value = false;
+  final BuildNewCvCtrl ctrl = Get.find<BuildNewCvCtrl>();
   @override
   Widget build(BuildContext context) {
     return Container(
-      alignment: Alignment.topCenter,
-      margin: EdgeInsets.only(top: 20),
-      padding: EdgeInsets.symmetric(horizontal: 20),
+      padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Center(
-        child: Column(
-          children: <Widget>[
-            const Text(
-              'Experience',
-              style: TextStyle(
-                color: Color(0xfff7892b),
-                fontSize: 30,
-                fontWeight: FontWeight.w800,
-                decoration: TextDecoration.underline,
+        child: SingleChildScrollView(
+          child: Column(
+            children: <Widget>[
+              const Text(
+                'Experience',
+                style: TextStyle(
+                  color: Color(0xfff7892b),
+                  fontSize: 30,
+                  fontWeight: FontWeight.w800,
+                  decoration: TextDecoration.underline,
+                ),
               ),
-            ),
-            const SizedBox(height: 50),
-            check(),
-            reference(),
-            // add(),
-          ],
+              const SizedBox(height: 50),
+              Obx(
+                () {
+                  return AppTextField(
+                    controller: ctrl.experienceC.value,
+                    text: 'Experience',
+                    keyboardtype: TextInputType.text,
+                    geticon: Icons.calendar_today,
+                    lines: 2,
+                  );
+                },
+              ),
+              const SizedBox(height: 10),
+              MyButton(
+                text: 'Next',
+                myFunc: () {
+                  ctrl.updateExperience(ctrl.experienceC.value.text);
+                  ctrl.updateTabController();
+                },
+              ),
+              const SizedBox(height: 20),
+              // text()
+            ],
+          ),
         ),
       ),
     );
   }
-
-  Widget check() {
-    return Container(
-      alignment: Alignment.topRight,
-      child: Checkbox(
-        activeColor: const Color(0xfff7892b),
-        side: const BorderSide(color: Color(0xfff7892b)),
-        value: value,
-        onChanged: (bool? v) {
-          setState(
-            () {
-              this.value = v!;
-            },
-          );
-        },
-      ),
-    );
-  }
-}
-
-Widget reference() {
-  var controller;
-  return AppTextField(
-    controller: controller,
-    text: 'Experience',
-    keyboardtype: TextInputType.text,
-    geticon: Icons.poll_outlined,
-  );
 }

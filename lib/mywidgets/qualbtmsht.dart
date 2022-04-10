@@ -15,45 +15,88 @@ class QualBottomSheet extends StatelessWidget {
       child: SingleChildScrollView(
         child: Column(
           children: [
-            const Text('degree/Certeficate'),
+            const Text(
+              'degree/Certeficate',
+              style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16),
+            ),
             TextField(
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 18,
+              ),
               controller: ctrl.degreeC.value,
             ),
             const SizedBox(
               height: 10,
             ),
-            const Text('Institute'),
+            const Text(
+              'Institute',
+              style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16),
+            ),
             TextField(
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 18,
+              ),
               controller: ctrl.instituteC.value,
             ),
             const SizedBox(
               height: 10,
             ),
-            const Text('Marks/gpa'),
+            const Text(
+              'Marks/gpa',
+              style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16),
+            ),
             TextField(
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 18,
+              ),
               controller: ctrl.marksC.value,
             ),
             const SizedBox(
               height: 10,
             ),
-            const Text('Year'),
+            const Text(
+              'Year',
+              style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16),
+            ),
             TextField(
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 18,
+              ),
               controller: ctrl.yearC.value,
             ),
             const SizedBox(
               height: 10,
             ),
-            MyButton(
-              text: 'Add',
-              myFunc: () {
-                ctrl.addQual();
-                // yearC.dispose();
-                // instituteC.dispose();
-                // degreeC.dispose();
-                // marksC.dispose();
-                Get.back();
-              },
-            )
+            ElevatedButton(
+                style: ElevatedButton.styleFrom(primary: Colors.white),
+                onPressed: () {
+                  ctrl.addQual();
+                  Get.back();
+                },
+                child: Text(
+                  'ADD',
+                  style: TextStyle(fontSize: 16, color: Colors.orange),
+                ))
           ],
         ),
       ),

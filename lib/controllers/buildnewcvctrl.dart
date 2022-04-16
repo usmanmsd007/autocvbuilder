@@ -326,9 +326,11 @@ class BuildNewCvCtrl extends GetxController
             projects: projectList.value,
             experience: experienceText.value,
           );
-          final image = p.MemoryImage(
-            File(imageFilePath.value).readAsBytesSync(),
-          );
+          var image = imageFilePath.value.isNotEmpty
+              ? p.MemoryImage(
+                  File(imageFilePath.value).readAsBytesSync(),
+                )
+              : "";
 
           return p.Container(
             child: p.Column(
@@ -337,17 +339,19 @@ class BuildNewCvCtrl extends GetxController
                 children: [
                   // p.Text('Personal Information'),
                   p.Row(children: [
-                    p.Container(
-                      width: 100,
-                      height: 100,
-                      decoration: p.BoxDecoration(
-                        shape: p.BoxShape.circle,
-                        image: p.DecorationImage(
-                          image: image,
-                          fit: p.BoxFit.cover,
-                        ),
-                      ),
-                    ),
+                    imageFilePath.value.isNotEmpty
+                        ? p.Container(
+                            width: 100,
+                            height: 100,
+                            decoration: p.BoxDecoration(
+                              shape: p.BoxShape.circle,
+                              image: p.DecorationImage(
+                                image: image as p.ImageProvider,
+                                fit: p.BoxFit.cover,
+                              ),
+                            ),
+                          )
+                        : p.Container(),
                     p.SizedBox(width: 10),
                     p.Text(m.personalInfo!.name.toUpperCase(),
                         style: p.TextStyle(

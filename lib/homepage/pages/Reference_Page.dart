@@ -117,22 +117,6 @@ class MyReference extends StatelessWidget {
                       ],
                     ),
                   );
-
-                  // Get.dialog(Container(
-                  //   child: Column(children: [
-                  //     Text(
-                  //       'Please enter a name for your CV',
-                  //     ),
-                  //     TextFormField(
-                  //       controller: ctrl.filenameCtrl.value,
-                  //     ),
-                  //     ElevatedButton(
-                  //         onPressed: () {
-                  //           ctrl.openFile(ctrl.filenameCtrl.value.text);
-                  //         },
-                  //         child: Text('Save'))
-                  //   ]),
-                  // ));
                 },
                 child: Text(
                   'CREATE CV',

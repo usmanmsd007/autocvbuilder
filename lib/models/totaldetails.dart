@@ -62,7 +62,7 @@ class TotalDetails {
     final listOfStrings = <String>[];
     final qualtemp = snap[property];
     for (String string in qualtemp) {
-      print("this is from acheivements" + string);
+      // print("this is from acheivements" + string);
       listOfStrings.add(string);
     }
     return listOfStrings;

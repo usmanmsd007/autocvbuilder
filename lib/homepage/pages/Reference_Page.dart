@@ -94,16 +94,7 @@ class MyReference extends StatelessWidget {
                 )
               ],
             ),
-            // MyButton(
-            //   text: 'Add',
-            //   myFunc: () {
-            //     ctrl.updateLanguages();
-            //   },
-            // )
-            // const SizedBox(
-            //   height: 10,
-            // )
-            // ,
+
             SizedBox(
               height: 10,
             ),
@@ -111,8 +102,37 @@ class MyReference extends StatelessWidget {
                 style: ElevatedButton.styleFrom(primary: Colors.orange),
                 onPressed: () {
                   ctrl.printAllData();
-                  ctrl.openFile();
-                  // ctrl.generateCenteredText('hello how are you?');
+                  Get.defaultDialog(
+                    title: 'Please enter a name for your CV',
+                    content: Column(
+                      children: [
+                        TextFormField(
+                          controller: ctrl.filenameCtrl.value,
+                        ),
+                        ElevatedButton(
+                            onPressed: () {
+                              ctrl.openFile(ctrl.filenameCtrl.value.text);
+                            },
+                            child: Text('Save'))
+                      ],
+                    ),
+                  );
+
+                  // Get.dialog(Container(
+                  //   child: Column(children: [
+                  //     Text(
+                  //       'Please enter a name for your CV',
+                  //     ),
+                  //     TextFormField(
+                  //       controller: ctrl.filenameCtrl.value,
+                  //     ),
+                  //     ElevatedButton(
+                  //         onPressed: () {
+                  //           ctrl.openFile(ctrl.filenameCtrl.value.text);
+                  //         },
+                  //         child: Text('Save'))
+                  //   ]),
+                  // ));
                 },
                 child: Text(
                   'CREATE CV',

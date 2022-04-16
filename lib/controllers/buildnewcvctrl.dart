@@ -6,14 +6,17 @@ import 'package:auto_cv_builder/helperclasses/firestoredb.dart';
 import 'package:auto_cv_builder/models/personalinfo.dart';
 import 'package:auto_cv_builder/models/qualification.dart';
 import 'package:auto_cv_builder/models/totaldetails.dart';
+import 'package:auto_cv_builder/personal_info_icons_icons.dart';
 import 'package:auto_cv_builder/publicvars/public.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as p;
 import 'package:open_file/open_file.dart';
 
@@ -29,6 +32,9 @@ class BuildNewCvCtrl extends GetxController
   Rx<TextEditingController> addressc = TextEditingController(text: "").obs;
   Rx<TextEditingController> emailc = TextEditingController(text: "").obs;
   RxString objectiveText = ''.obs;
+
+  var filenameCtrl = TextEditingController(text: 'File').obs;
+
   // new
   RxString projectText = ''.obs;
   RxString experienceText = ''.obs;
@@ -97,7 +103,11 @@ class BuildNewCvCtrl extends GetxController
       qualList.value = totalDetailsList.value!.first.qualifications;
       acheivementsList.value = (totalDetailsList.value!.first.acheivements);
       selectedDate.value = totalDetailsList.value!.first.personalInfo!.dob;
-      // personalInfo.value = totalDL.value!.first.personalInfo!;
+      skillslist.value = totalDetailsList.value!.first.skills;
+      referenceList.value = totalDetailsList.value!.first.references;
+      experienceC.value.text = totalDetailsList.value!.first.experience!;
+      projectList.value = totalDetailsList.value!.first.projects;
+      languageList.value = totalDetailsList.value!.first.langs;
       update();
       refresh();
       print('the controllers has been   initialized');
@@ -297,15 +307,425 @@ class BuildNewCvCtrl extends GetxController
       height: 50,
     )
   ];
-  Future<File> generateCenteredText(String text, String filename) async {
+  Future<File> generateCenteredText(String filename) async {
     final pdf = p.Document();
+    final pathtottf = await rootBundle.load('fonts/PersonalInfoIcons.ttf');
+    final ttf = p.Font.ttf(pathtottf);
 
     pdf.addPage(p.Page(
-      build: (p.Context context) => p.Container(
-          child: p.Column(children: [
-        imageFilePath.value.isNotEmpty ? p.Center() : p.Container(),
-      ])),
-    ));
+        theme: p.ThemeData.withFont(icons: ttf),
+        build: (p.Context context) {
+          var m = TotalDetails(
+            acheivements: acheivementsList.value,
+            obejctives: objectiveText.value,
+            qualifications: qualList.value,
+            personalInfo: personalInfoObj.value,
+            skills: skillslist.value,
+            references: referenceList.value,
+            langs: languageList.value,
+            projects: projectList.value,
+            experience: experienceText.value,
+          );
+          final image = p.MemoryImage(
+            File(imageFilePath.value).readAsBytesSync(),
+          );
+
+          return p.Container(
+            child: p.Column(
+                mainAxisAlignment: p.MainAxisAlignment.center,
+                crossAxisAlignment: p.CrossAxisAlignment.center,
+                children: [
+                  // p.Text('Personal Information'),
+                  p.Row(children: [
+                    p.Container(
+                      width: 100,
+                      height: 100,
+                      decoration: p.BoxDecoration(
+                        shape: p.BoxShape.circle,
+                        image: p.DecorationImage(
+                          image: image,
+                          fit: p.BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                    p.SizedBox(width: 10),
+                    p.Text(m.personalInfo!.name.toUpperCase(),
+                        style: p.TextStyle(
+                            fontSize: 20, fontWeight: p.FontWeight.bold)),
+                  ]),
+
+                  p.Column(
+                      mainAxisAlignment: p.MainAxisAlignment.start,
+                      crossAxisAlignment: p.CrossAxisAlignment.start,
+                      children: [
+                        p.Container(
+                          width: Get.width - 40,
+                          child: p.Text(m.obejctives!,
+                              overflow: p.TextOverflow.clip),
+                        ),
+                        p.SizedBox(height: 5),
+                        p.Container(
+                          width: Get.width,
+                          height: 2,
+                          color: PdfColor.fromHex('#000000'),
+                        ),
+                        p.Text(
+                          'QUALIFICATIONS',
+                          style: p.TextStyle(
+                            fontSize: 14,
+                            fontWeight: p.FontWeight.bold,
+                            color: PdfColor.fromHex(
+                              '#000000',
+                            ),
+                          ),
+                        ),
+                        p.SizedBox(height: 5),
+                        p.Table(
+                          // border: p.TableBorder.all(color: PdfColors.black),
+                          children: [
+                            p.TableRow(
+                              children: [
+                                p.Container(
+                                  width: Get.width / 5,
+                                  child: p.Text('Degree',
+                                      textAlign: p.TextAlign.left),
+                                ),
+                                p.Container(
+                                  width: Get.width / 3,
+                                  child: p.Text('Board/University',
+                                      textAlign: p.TextAlign.left),
+                                ),
+                                p.Container(
+                                  width: Get.width / 5,
+                                  child: p.Text('Marks/GPA',
+                                      textAlign: p.TextAlign.left),
+                                ),
+                                p.Container(
+                                  width: Get.width / 5,
+                                  child: p.Text('Year',
+                                      textAlign: p.TextAlign.left),
+                                ),
+                              ],
+                            ),
+
+                            // growable: false,
+                          ],
+                        ),
+                        p.Table(
+                          // border: p.TableBorder(bottom: p.BorderSide()),
+                          children: List<p.TableRow>.generate(
+                            m.qualifications.length,
+                            (index) {
+                              final person = m.qualifications[index];
+                              return p.TableRow(
+                                children: [
+                                  p.Container(
+                                    width: Get.width / 5,
+                                    child: p.Text(person!.degree,
+                                        overflow: p.TextOverflow.clip,
+                                        textAlign: p.TextAlign.left),
+                                  ),
+                                  p.Container(
+                                    width: Get.width / 3,
+                                    child: p.Text(person.board,
+                                        overflow: p.TextOverflow.clip,
+                                        textAlign: p.TextAlign.left),
+                                  ),
+                                  p.Container(
+                                    width: Get.width / 5,
+                                    child: p.Text(person.marks,
+                                        overflow: p.TextOverflow.clip,
+                                        textAlign: p.TextAlign.left),
+                                  ),
+                                  p.Container(
+                                    width: Get.width / 5,
+                                    child: p.Text(person.year,
+                                        overflow: p.TextOverflow.clip,
+                                        textAlign: p.TextAlign.left),
+                                  ),
+                                ],
+                              );
+                            },
+                            growable: false,
+                          ),
+                        ),
+                        p.Container(
+                          width: Get.width,
+                          height: 2,
+                          color: PdfColor.fromHex('#000000'),
+                        ),
+                        p.Row(
+                            mainAxisAlignment: p.MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: p.CrossAxisAlignment.start,
+                            children: [
+                              //this is the new column
+                              p.Column(
+                                  crossAxisAlignment:
+                                      p.CrossAxisAlignment.start,
+                                  children: [
+                                    p.Text(
+                                      'ACHEIVEMENTS',
+                                      style: p.TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: p.FontWeight.bold,
+                                        color: PdfColor.fromHex(
+                                          '#000000',
+                                        ),
+                                      ),
+                                    ),
+                                    p.Column(
+                                        mainAxisAlignment:
+                                            p.MainAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            p.CrossAxisAlignment.start,
+                                        children: List.generate(
+                                            m.acheivements.length,
+                                            (index) => p.Text(
+                                                m.acheivements[index]! + '',
+                                                textAlign: p.TextAlign.left))),
+                                    p.Container(
+                                      width: Get.width / 2.1,
+                                      height: 2,
+                                      color: PdfColor.fromHex('#000000'),
+                                    ),
+                                    p.SizedBox(height: 5),
+                                    p.Text(
+                                      'PROJECTS',
+                                      style: p.TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: p.FontWeight.bold,
+                                        color: PdfColor.fromHex(
+                                          '#000000',
+                                        ),
+                                      ),
+                                    ),
+                                    p.Column(
+                                        mainAxisAlignment:
+                                            p.MainAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            p.CrossAxisAlignment.start,
+                                        children: List.generate(
+                                            m.projects.length,
+                                            (index) => p.Text(
+                                                m.projects[index]! + '',
+                                                textAlign: p.TextAlign.left))),
+                                    p.Container(
+                                      width: Get.width / 2.1,
+                                      height: 2,
+                                      color: PdfColor.fromHex('#000000'),
+                                    ),
+                                    p.SizedBox(height: 5),
+                                    p.Text(
+                                      'LANGUAGES',
+                                      style: p.TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: p.FontWeight.bold,
+                                        color: PdfColor.fromHex(
+                                          '#000000',
+                                        ),
+                                      ),
+                                    ),
+                                    p.Column(
+                                        mainAxisAlignment:
+                                            p.MainAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            p.CrossAxisAlignment.start,
+                                        children: List.generate(
+                                            m.langs.length,
+                                            (index) => p.Text(
+                                                m.langs[index]! + '',
+                                                textAlign: p.TextAlign.left))),
+                                  ]),
+                              p.Column(children: [
+                                p.Column(
+                                    mainAxisAlignment:
+                                        p.MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        p.CrossAxisAlignment.start,
+                                    children: [
+                                      p.Text(
+                                        'SKILLS',
+                                        style: p.TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: p.FontWeight.bold,
+                                          color: PdfColor.fromHex(
+                                            '#000000',
+                                          ),
+                                        ),
+                                      ),
+                                      p.Column(
+                                          mainAxisAlignment:
+                                              p.MainAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              p.CrossAxisAlignment.start,
+                                          children: List.generate(
+                                              m.skills.length,
+                                              (index) => p.Text(
+                                                  m.skills[index]! + '',
+                                                  textAlign:
+                                                      p.TextAlign.left))),
+                                      p.Container(
+                                        width: Get.width / 2,
+                                        height: 2,
+                                        color: PdfColor.fromHex('#000000'),
+                                      ),
+                                    ]),
+                                p.Column(
+                                    mainAxisAlignment:
+                                        p.MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        p.CrossAxisAlignment.start,
+                                    children: [
+                                      p.Text(
+                                        'EXPERIENCE',
+                                        style: p.TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: p.FontWeight.bold,
+                                          color: PdfColor.fromHex(
+                                            '#000000',
+                                          ),
+                                        ),
+                                      ),
+                                      p.Container(
+                                        width: Get.width / 2,
+                                        child: p.Text(m.experience!,
+                                            overflow: p.TextOverflow.clip),
+                                      ),
+                                    ]),
+                                p.SizedBox(height: 5),
+                                p.Container(
+                                  width: Get.width / 2,
+                                  height: 2,
+                                  color: PdfColor.fromHex('#000000'),
+                                ),
+                                p.Column(
+                                    mainAxisAlignment:
+                                        p.MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        p.CrossAxisAlignment.start,
+                                    children: [
+                                      p.SizedBox(height: 5),
+                                      p.Row(
+                                          // mainAxisAlignment: p.MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            p.Icon(
+                                                p.IconData(
+                                                  PersonalInfoIcons
+                                                      .phone_android.codePoint,
+                                                ),
+                                                size: 14), // p.Text(
+                                            p.SizedBox(width: 5),
+
+                                            p.Text(
+                                              m.personalInfo!.contact
+                                                  .toUpperCase(),
+                                              style: p.TextStyle(
+                                                fontSize: 12,
+                                                color: PdfColors.blue,
+                                              ),
+                                            ),
+                                          ]),
+                                      p.Row(
+                                          // mainAxisAlignment: p.MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            p.Icon(
+                                                p.IconData(
+                                                  PersonalInfoIcons
+                                                      .email.codePoint,
+                                                ),
+                                                size: 14), // p.Text(
+                                            p.SizedBox(width: 5),
+
+                                            p.Text(
+                                              m.personalInfo!.email
+                                                  .toUpperCase(),
+                                              style: p.TextStyle(
+                                                fontSize: 12,
+                                                color: PdfColors.blue,
+                                              ),
+                                            ),
+                                          ]),
+                                      p.Row(children: [
+                                        p.Icon(
+                                            p.IconData(
+                                              PersonalInfoIcons
+                                                  .edit_location.codePoint,
+                                            ),
+                                            size: 14),
+                                        p.SizedBox(width: 5),
+                                        p.Text(
+                                          m.personalInfo!.address.toUpperCase(),
+                                          style: p.TextStyle(
+                                            fontSize: 12,
+                                            color: PdfColors.blue,
+                                          ),
+                                        ),
+                                      ]),
+                                      p.Row(
+                                          // mainAxisAlignment: p.MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            p.Icon(
+                                                p.IconData(
+                                                  PersonalInfoIcons
+                                                      .date_range.codePoint,
+                                                ),
+                                                size: 14),
+                                            p.SizedBox(width: 5),
+                                            p.Text(
+                                              m.personalInfo!.dob.toUpperCase(),
+                                              style: p.TextStyle(
+                                                fontSize: 12,
+                                                color: PdfColors.blue,
+                                              ),
+                                            ),
+                                          ]),
+                                      p.Container(
+                                        width: Get.width / 2,
+                                        height: 2,
+                                        color: PdfColor.fromHex('#000000'),
+                                      ),
+                                    ]),
+                                p.Column(
+                                    mainAxisAlignment:
+                                        p.MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        p.CrossAxisAlignment.start,
+                                    children: [
+                                      p.SizedBox(height: 5),
+                                      p.Text(
+                                        'REFERENCES',
+                                        style: p.TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: p.FontWeight.bold,
+                                          color: PdfColor.fromHex(
+                                            '#000000',
+                                          ),
+                                        ),
+                                      ),
+                                      p.Column(
+                                          mainAxisAlignment:
+                                              p.MainAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              p.CrossAxisAlignment.start,
+                                          children: List.generate(
+                                              m.references.length,
+                                              (index) => p.Text(
+                                                  m.references[index]! + '',
+                                                  textAlign:
+                                                      p.TextAlign.left))),
+                                      p.Container(
+                                        width: Get.width / 2,
+                                        height: 2,
+                                        color: PdfColor.fromHex('#000000'),
+                                      ),
+                                    ]),
+                              ]), //this is the new column
+                            ]),
+                      ]),
+                ]),
+          );
+        }));
+
     return saveDocument(name: '${filename}.pdf', pdf: pdf);
   }
 
@@ -321,7 +741,7 @@ class BuildNewCvCtrl extends GetxController
   }
 
   Future openFile(String n) async {
-    File file = await generateCenteredText('usman', n);
+    File file = await generateCenteredText(n);
     final url = file.path;
 
     await OpenFile.open(url);
